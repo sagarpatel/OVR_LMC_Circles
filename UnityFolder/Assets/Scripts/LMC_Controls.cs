@@ -14,7 +14,9 @@ public class LMC_Controls : MonoBehaviour
 
 	public float currentCircleProgress = 0;
 	float previousCircleProgress;
-	// Use this for initialization
+
+	GameObject ovrCamera;
+
 	void Start () 
 	{
 		// Leap stuff
@@ -24,6 +26,8 @@ public class LMC_Controls : MonoBehaviour
 		controller.Config.Save();	
 
 		pointer = (GameObject) GameObject.Instantiate(pointerPrefab, transform.position, Quaternion.identity);
+
+		ovrCamera = GameObject.FindWithTag("MainCamera");
 
 	}
 	
@@ -44,7 +48,10 @@ public class LMC_Controls : MonoBehaviour
 
 		Pointable pointable = frame.Pointables.Frontmost;
 		Vector3 tipPosition = pointable.StabilizedTipPosition.ToUnity();
-		pointer.transform.position = tipPosition;	
+		//pointer.transform.position = ovrCamera.transform.rotation * tipPosition;	
+
+		pointer.transform.localPosition = tipPosition;
+		pointer.transform.position = ovrCamera.transform.rotation * pointer.transform.position;
 
 		//Debug.Log(tipPosition);
 	}
