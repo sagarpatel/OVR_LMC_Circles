@@ -8,6 +8,7 @@ public class LMC_Controls : MonoBehaviour
 	Controller controller;
 
 	public GameObject pointerPrefab;
+	public GameObject bulletPrefab;
 
 	GameObject pointer;
 
@@ -34,7 +35,7 @@ public class LMC_Controls : MonoBehaviour
 		DisplayFingerTips(currentFrame);
 		TrackCircleProgress(currentFrame);
 
-		HandleSphereSpawn();
+		HandleSphereSpawn(currentFrame);
 	}
 
 	void DisplayFingerTips(Frame frame)
@@ -58,7 +59,7 @@ public class LMC_Controls : MonoBehaviour
 		}
 	}
 
-	void HandleSphereSpawn()
+	void HandleSphereSpawn(Frame frame)
 	{
 		float previousFloor = Mathf.Floor(previousCircleProgress);
 		float currentFloor = Mathf.Floor(currentCircleProgress);
@@ -66,6 +67,25 @@ public class LMC_Controls : MonoBehaviour
 		if(currentFloor > previousFloor)
 		{
 			Debug.Log("SPAWN CIRCLE)");
+			Gesture gesture = frame.Gestures()[0];
+			CircleGesture circleGesture = new CircleGesture(gesture);
+			
+			float direction = 1.0f;
+			if (circleGesture.Pointable.Direction.AngleTo(circleGesture.Normal) <= Mathf.PI/2) 
+				direction *= 1.0f;
+			else
+				direction *= -1.0f;
+
+
+			Vector3 sNormal = direction * circleGesture.Normal.ToUnity();
+			Vector3 sVelocity = sNormal * 100.0f;
+			Vector3 sPosition = circleGesture.Center.ToUnity();
+			Vector3 sScale = new Vector3(circleGesture.Radius, circleGesture.Radius, circleGesture.Radius);
+
+			GameObject bullet = (GameObject)Instantiate(bulletPrefab, sPosition, Quaternion.LookRotation(sNormal));
+			bullet.transform.localScale = sScale;
+			bullet.GetComponent<PVA>().intialVelocity = sVelocity;
+
 		}
 
 	}
