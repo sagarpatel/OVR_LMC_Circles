@@ -36,6 +36,7 @@ public class LMC_Controls : MonoBehaviour
 		TrackCircleProgress(currentFrame);
 
 		HandleSphereSpawn(currentFrame);
+		HandleSpotLightDirection(currentFrame);
 	}
 
 	void DisplayFingerTips(Frame frame)
@@ -98,6 +99,13 @@ public class LMC_Controls : MonoBehaviour
 
 		}
 
+	}
+
+	void HandleSpotLightDirection(Frame frame)
+	{
+		Pointable pointable = frame.Pointables.Frontmost;
+		Vector3 tipDirection = pointable.Direction.ToUnity();
+		GameObject.FindWithTag("SpotLight").GetComponent<SpotLight>().forwardVector = tipDirection;
 	}
 
 
