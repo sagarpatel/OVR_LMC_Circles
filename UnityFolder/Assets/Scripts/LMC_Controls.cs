@@ -76,15 +76,25 @@ public class LMC_Controls : MonoBehaviour
 			else
 				direction *= -1.0f;
 
+			float circleCircumference = 2.0f * Mathf.PI * circleGesture.Radius;
+			float distanceCovered = circleCircumference * circleGesture.Progress;
+
+
+			float duration  = Mathf.Clamp(gesture.Duration, 0.0001f, 1000000.0f);
+			float averageSpeed = distanceCovered / duration;
+			averageSpeed *= 600000.0f;
+			averageSpeed *= -direction;
 
 			Vector3 sNormal = direction * circleGesture.Normal.ToUnity();
-			Vector3 sVelocity = sNormal * 100.0f;
+			Vector3 sVelocity = sNormal * Mathf.Abs(averageSpeed) * 0.2f;
 			Vector3 sPosition = circleGesture.Center.ToUnity();
 			Vector3 sScale = new Vector3(circleGesture.Radius, circleGesture.Radius, circleGesture.Radius);
 
 			GameObject bullet = (GameObject)Instantiate(bulletPrefab, sPosition, Quaternion.LookRotation(sNormal));
+			bullet.transform.forward = sNormal;
 			bullet.transform.localScale = sScale;
 			bullet.GetComponent<PVA>().intialVelocity = sVelocity;
+			bullet.GetComponent<Rotation>().rotation = averageSpeed;
 
 		}
 
